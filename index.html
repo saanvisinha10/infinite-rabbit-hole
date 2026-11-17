@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The Infinite Rabbit Hole</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #050008;
+  color: white;
+  font-family: Georgia, serif;
+  text-align: center;
+  overflow-x: hidden;
+  transition: background 1s;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, transparent, black 90%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  color: #d8a1ff;
+  animation: drift linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes drift {
+  from {
+    transform: translateY(100vh) rotate(0deg);
+  }
+  to {
+    transform: translateY(-20vh) rotate(360deg);
+  }
+}
+
+button {
+  background: #35005c;
+  color: white;
+  border: 1px solid #bd70ff;
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-size: 15px;
+  cursor: pointer;
+  margin: 10px;
+  box-shadow: 0 0 15px #7600aa;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #7900bb;
+  transform: scale(1.07);
+  box-shadow: 0 0 30px #c000ff;
+}
+
+input {
+  background: #100018;
+  border: 1px solid #b66cff;
+  color: white;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 17px;
+  text-align: center;
+  width: 240px;
+  max-width: 90%;
+  outline: none;
+}
+
+input:focus {
+  box-shadow: 0 0 20px purple;
+}
+
+h1 {
+  font-size: clamp(28px, 7vw, 48px);
+  color: #dfb0ff;
+  text-shadow: 0 0 20px #a000ff;
+}
+
+h2 {
+  color: #d7a1ff;
+  text-shadow: 0 0 12px purple;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #d9c4e8;
+}
+
+.small {
+  font-size: 13px;
+  color: #8c6c9f;
+  letter-spacing: 3px;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 90px 20px 60px;
+  animation: appear 1s;
+}
+
+#home {
+  display: block;
+  padding-top: 18vh;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel {
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 30px 20px;
+  background: rgba(35, 0, 55, 0.55);
+  border: 1px solid #8e36bd;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(130, 0, 200, 0.2);
+}
+
+#musicBtn {
+  position: fixed;
+  top: 12px;
+  right: 10px;
+  z-index: 100;
+  font-size: 12px;
+  padding: 12px;
+  background: #100018;
+}
+
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: #d000ff;
+  box-shadow: 0 0 15px magenta;
+  transition: width 0.6s;
+  z-index: 200;
+}
+
+#feedback {
+  min-height: 35px;
+  color: #ff86ff;
+  font-size: 16px;
+}
+
+#roomNumber {
+  color: #8d5aaa;
+  letter-spacing: 5px;
+  font-size: 13px;
+}
+
+#roomTitle {
+  font-size: clamp(30px, 7vw, 45px);
+}
+
+#roomText {
+  white-space: pre-line;
+}
+
+.choice {
+  display: block;
+  width: 85%;
+  max-width: 350px;
+  margin: 15px auto;
+}
+
+#room3 {
+  animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+  }
+  91% {
+    transform: translate(3px, -2px);
+  }
+  93% {
+    transform: translate(-3px, 2px);
+  }
+  95% {
+    transform: translate(2px, 1px);
+  }
+}
+
+.red {
+  color: #ff3333 !important;
+  text-shadow: 0 0 20px red !important;
+}
+
+#room5 .panel {
+  border-color: red;
+  box-shadow: 0 0 30px #6b0000;
+}
+
+#room6 .panel {
+  border-color: #888;
+}
+
+#room7 .panel {
+  border-color: gold;
+  box-shadow: 0 0 35px #886600;
+}
+
+#room8 {
+  background: #000;
+}
+
+#room8 h1 {
+  color: red;
+  text-shadow: 0 0 25px red;
+}
+
+.hidden {
+  display: none;
+}
+
+.shake {
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+footer {
+  color: #50365e;
+  font-size: 12px;
+  margin-top: 50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+<div id="particles"></div>
+
+<button id="musicBtn" onclick="toggleMusic()">
+🔇 MUSIC OFF
+</button>
+
+<!-- HOME -->
+
+<div id="home" class="screen">
+
+<p class="small">A PLACE THAT DOES NOT EXIST</p>
+
+<h1>🕳️ THE INFINITE<br>RABBIT HOLE</h1>
+
+<p>You weren't supposed to find this.</p>
+
+<p id="homeMessage">
+Something is waiting beyond this screen...
+</p>
+
+<button onclick="enterRabbitHole()">
+ENTER THE RABBIT HOLE
+</button>
+
+<p class="small" style="margin-top:40px;">
+THERE IS NO GOING BACK.
+</p>
+
+<footer>Experiment 001 — Unknown Origin</footer>
+
+</div>
+
+
+<!-- SECRET PORTAL -->
+
+<div id="portal" class="screen">
+
+<div class="panel">
+
+<h1>🔮</h1>
+
+<h2>YOU FOUND THE SECRET PORTAL</h2>
+
+<p>
+Three clicks.<br>
+One discovery.<br>
+A door that should not exist.
+</p>
+
+<p class="small">YOU HAVE BEEN EXPECTED.</p>
+
+<button onclick="startRooms()">
+ENTER SECRET ROOM
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ROOM TEMPLATE -->
+
+<div id="room" class="screen">
+
+<div id="roomNumber">ROOM 001</div>
+
+<h1 id="roomTitle">THE BEGINNING</h1>
+
+<div class="panel" id="roomPanel">
+
+<p id="roomText"></p>
+
+<div id="roomChallenge"></div>
+
+<p id="feedback"></p>
+
+</div>
+
+<p class="small" id="roomWarning"></p>
+
+</div>
+
+
+<!-- ROOM 008 -->
+
+<div id="room8" class="screen">
+
+<p class="small">ERROR 008</p>
+
+<h1>WAIT.</h1>
+
+<div class="panel">
+
+<h2 class="red">YOU WERE NOT SUPPOSED TO FIND THIS.</h2>
+
+<p>
+You escaped Room 007.<br>
+You closed the door.<br>
+You thought it was over.
+</p>
+
+<p id="finalMessage"></p>
+
+<button onclick="secretEnding()">
+WHO IS THERE?
+</button>
+
+<p id="secretAnswer"></p>
+
+</div>
+
+</div>
+
+
+<script>
+
+// PARTICLES
+
+for (let i = 0; i < 55; i++) {
+
+  let particle = document.createElement("div");
+
+  particle.className = "particle";
+  particle.innerText = Math.random() > 0.5 ? "✦" : ".";
+
+  particle.style.left = Math.random() * 100 + "vw";
+  particle.style.fontSize = (8 + Math.random() * 15) + "px";
+  particle.style.animationDuration = (5 + Math.random() * 12) + "s";
+  particle.style.animationDelay = Math.random() * 10 + "s";
+
+  document.getElementById("particles").appendChild(particle);
+
+}
+
+
+// SCREEN SYSTEM
+
+function showScreen(id) {
+
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.style.display = "none";
+  });
+
+  document.getElementById(id).style.display = "block";
+
+  window.scrollTo(0, 0);
+}
+
+
+// HOME CLICK SYSTEM
+
+let clicks = 0;
+
+let homeMessages = [
+  "Are you sure you want to continue?",
+  "Someone was here before you.",
+  "Why are you still clicking?",
+  "The portal is getting closer...",
+  "Don't look behind you. 👁️",
+  "It knows you're here."
+];
+
+function enterRabbitHole() {
+
+  clicks++;
+
+  document.getElementById("homeMessage").innerText =
+    homeMessages[Math.floor(Math.random() * homeMessages.length)];
+
+  if (clicks >= 3) {
+
+    setTimeout(() => {
+      showScreen("portal");
+    }, 700);
+
+  }
+
+}
+
+
+// ROOM DATA
+
+const rooms = [
+
+{
+  title: "THE BEGINNING",
+  text: "WELCOME TO ROOM 001.\n\nThere are seven rooms.\nSeven doors.\nSeven chances to turn back.\n\nBut you won't turn back, will you?",
+  warning: "THE FIRST DOOR IS OPEN.",
+  type: "input",
+  question: "I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?",
+  answer: ["echo"]
+},
+
+{
+  title: "THE FORGOTTEN MEMORY",
+  text: "ROOM 002.\n\nYou remember this place.\n\nYou have been here before.\n\nOr have you?\n\nSomething is missing from your memory.",
+  warning: "SOME MEMORIES ARE BETTER LEFT FORGOTTEN.",
+  type: "input",
+  question: "What belongs to you, but other people use it more than you do?",
+  answer: ["your name", "name"]
+},
+
+{
+  title: "THE GLITCH",
+  text: "ROOM 003.\n\nERROR. ERROR. ERROR.\n\nThe walls are moving.\nThe screen is lying.\n\nYou were not meant to reach this room.\n\nSYSTEM MESSAGE: DO NOT TRUST THE WEBSITE.",
+  warning: "CAN YOU HEAR THE STATIC?",
+  type: "input",
+  question: "Complete this sentence: I think, therefore I ____.",
+  answer: ["am", "exist"]
+},
+
+{
+  title: "THE WATCHER",
+  text: "ROOM 004.\n\nYou feel something looking at you.\n\nIt never blinks.\nIt never sleeps.\n\nIt has been watching since Room 001.",
+  warning: "IT CAN SEE YOUR CHOICE.",
+  type: "choice",
+  question: "Which symbol is watching you?",
+  choices: [
+    { text: "✦ THE STAR", answer: false },
+    { text: "👁 THE EYE", answer: true },
+    { text: "☾ THE MOON", answer: false }
+  ]
+},
+
+{
+  title: "THE RED ROOM",
+  text: "ROOM 005.\n\nEverything is red.\n\nA message appears on the wall:\n\nFOUR WALLS.\nONE DOOR.\nSEVEN ROOMS.\n\nThe lock needs a three-digit code.",
+  warning: "THE WRONG CODE HAS CONSEQUENCES.",
+  type: "input",
+  question: "Enter the three numbers hidden in the message.",
+  answer: ["417"]
+},
+
+{
+  title: "THE LAST WARNING",
+  text: "ROOM 006.\n\nA voice whispers:\n\n\"You can still leave.\"\n\n\"But if you continue, you must choose who to trust.\"\n\nThere are two doors.",
+  warning: "CHOOSE CAREFULLY.",
+  type: "choice",
+  question: "Which door will you choose?",
+  choices: [
+    { text: "THE WHITE DOOR", answer: false },
+    { text: "THE BLACK DOOR", answer: true }
+  ]
+},
+
+{
+  title: "THE EXIT?",
+  text: "ROOM 007.\n\nYou made it.\n\nSeven rooms.\nSeven mysteries.\n\nThe final door is right in front of you.\n\nA message appears:\n\n\"CONGRATULATIONS. YOU ESCAPED.\"\n\nDo you believe it?",
+  warning: "SOME ENDINGS ARE NOT ENDINGS.",
+  type: "ending",
+  question: "OPEN THE FINAL DOOR."
+}
+
+];
+
+
+// ROOM SYSTEM
+
+let currentRoom = 0;
+
+function startRooms() {
+
+  currentRoom = 0;
+  loadRoom();
+
+}
+
+function loadRoom() {
+
+  let data = rooms[currentRoom];
+
+  showScreen("room");
+
+  document.getElementById("roomNumber").innerText =
+    "ROOM 00" + (currentRoom + 1);
+
+  document.getElementById("roomTitle").innerText =
+    data.title;
+
+  document.getElementById("roomText").innerText =
+    data.text;
+
+  document.getElementById("roomWarning").innerText =
+    data.warning;
+
+  document.getElementById("feedback").innerText = "";
+
+  document.getElementById("progress").style.width =
+    ((currentRoom + 1) / 7 * 100) + "%";
+
+  let challenge = document.getElementById("roomChallenge");
+
+  challenge.innerHTML = "";
+
+  if (currentRoom === 2) {
+    document.getElementById("roomPanel").style.background =
+      "rgba(70, 0, 0, 0.3)";
+  } else if (currentRoom === 4) {
+    document.getElementById("roomPanel").style.background =
+      "rgba(100, 0, 0, 0.35)";
+  } else {
+    document.getElementById("roomPanel").style.background =
+      "rgba(35, 0, 55, 0.55)";
+  }
+
+  if (currentRoom === 2) {
+    document.getElementById("roomTitle").classList.add("red");
+  } else {
+    document.getElementById("roomTitle").classList.remove("red");
+  }
+
+  let question = document.createElement("p");
+  question.innerText = data.question;
+  challenge.appendChild(question);
+
+  if (data.type === "input") {
+
+    let input = document.createElement("input");
+
+    input.id = "roomAnswer";
+    input.placeholder = "Your answer...";
+    input.autocomplete = "off";
+
+    challenge.appendChild(input);
+
+    let button = document.createElement("button");
+
+    button.innerText = "UNLOCK NEXT ROOM";
+    button.onclick = checkRoomAnswer;
+
+    challenge.appendChild(document.createElement("br"));
+    challenge.appendChild(button);
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") checkRoomAnswer();
+    });
+
+  }
+
+  if (data.type === "choice") {
+
+    data.choices.forEach(choice => {
+
+      let button = document.createElement("button");
+
+      button.className = "choice";
+      button.innerText = choice.text;
+
+      button.onclick = function() {
+
+        if (choice.answer) {
+          nextRoom();
+        } else {
+          wrongAnswer("THAT IS NOT THE RIGHT CHOICE.");
+        }
+
+      };
+
+      challenge.appendChild(button);
+
+    });
+
+  }
+
+  if (data.type === "ending") {
+
+    let button = document.createElement("button");
+
+    button.innerText = "OPEN THE FINAL DOOR";
+    button.onclick = finishGame;
+
+    challenge.appendChild(button);
+
+  }
+
+}
+
+
+// ANSWER CHECKING
+
+function checkRoomAnswer() {
+
+  let input = document.getElementById("roomAnswer");
+
+  let answer = input.value.trim().toLowerCase();
+
+  let correctAnswers = rooms[currentRoom].answer;
+
+  if (correctAnswers.includes(answer)) {
+
+    nextRoom();
+
+  } else {
+
+    wrongAnswer("❌ WRONG ANSWER. THE DOOR REMAINS LOCKED.");
+
+  }
+
+}
+
+function wrongAnswer(message) {
+
+  document.getElementById("feedback").innerText = message;
+
+  document.getElementById("roomPanel").classList.remove("shake");
+
+  void document.getElementById("roomPanel").offsetWidth;
+
+  document.getElementById("roomPanel").classList.add("shake");
+
+}
+
+function nextRoom() {
+
+  currentRoom++;
+
+  if (currentRoom < 7) {
+
+    loadRoom();
+
+  }
+
+}
+
+
+// FINAL ROOM
+
+function finishGame() {
+
+  showScreen("room8");
+
+  document.getElementById("progress").style.width = "100%";
+
+  setTimeout(() => {
+
+    document.getElementById("finalMessage").innerText =
+      "There is no Room 008.\n\nThere has never been a Room 008.";
+
+  }, 2500);
+
+}
+
+function secretEnding() {
+
+  document.getElementById("secretAnswer").innerText =
+    "YOU.\n\nYOU WERE THE ONE WHO OPENED THE DOOR.";
+
+  document.getElementById("finalMessage").innerText =
+    "SESSION COMPLETE.\n\nOR IS IT?";
+
+}
+
+
+// CREEPY BACKGROUND MUSIC
+
+let audioContext;
+let oscillators = [];
+let musicPlaying = false;
+
+function toggleMusic() {
+
+  if (!musicPlaying) {
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    audioContext.resume();
+
+    let frequencies = [55, 82.4, 110, 164.8];
+
+    frequencies.forEach((frequency, index) => {
+
+      let oscillator = audioContext.createOscillator();
+
+      let gain = audioContext.createGain();
+
+      oscillator.type = "sine";
+
+      oscillator.frequency.value = frequency;
+
+      gain.gain.value = index === 0 ? 0.035 : 0.012;
+
+      oscillator.connect(gain);
+
+      gain.connect(audioContext.destination);
+
+      oscillator.start();
+
+      oscillators.push(oscillator);
+
+    });
+
+    musicPlaying = true;
+
+    document.getElementById("musicBtn").innerText =
+      "🔊 MUSIC ON";
+
+  } else {
+
+    oscillators.forEach(oscillator => oscillator.stop());
+
+    oscillators = [];
+
+    audioContext.close();
+
+    audioContext = null;
+
+    musicPlaying = false;
+
+    document.getElementById("musicBtn").innerText =
+      "🔇 MUSIC OFF";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
